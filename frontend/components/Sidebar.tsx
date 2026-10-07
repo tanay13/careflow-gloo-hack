@@ -2,29 +2,29 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ClipboardList, FlaskConical, HeartHandshake, LayoutDashboard, PlusCircle, ScrollText, ShieldCheck } from "lucide-react";
+import { Church, ClipboardList, FlaskConical, LayoutDashboard, PlusCircle, ScrollText, ShieldCheck } from "lucide-react";
 import clsx from "clsx";
 
 const NAV = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
   { href: "/cases/new", label: "New care request", icon: PlusCircle },
-  { href: "/cases", label: "Case queue", icon: ClipboardList },
-  { href: "/audit", label: "Audit log", icon: ScrollText },
-  { href: "/evaluations", label: "Evaluations", icon: FlaskConical },
-  { href: "/policy", label: "Policy & tools", icon: ShieldCheck },
+  { href: "/cases", label: "Requests", icon: ClipboardList },
+  { href: "/audit", label: "Full record", icon: ScrollText },
+  { href: "/evaluations", label: "Quality checks", icon: FlaskConical },
+  { href: "/policy", label: "How it works", icon: ShieldCheck },
 ];
 
 export default function Sidebar() {
   const path = usePathname();
   return (
-    <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col border-r border-slate-200 bg-white">
+    <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col border-r border-[#eadfcb] bg-gradient-to-b from-amber-50 via-[#fdf9f2] to-white">
       <div className="flex items-center gap-2.5 px-5 py-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-700 text-white">
-          <HeartHandshake className="h-5 w-5" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-700 to-brand-900 text-white shadow-sm">
+          <Church className="h-5 w-5" />
         </div>
         <div>
-          <div className="text-[15px] font-semibold text-slate-900">CareFlow</div>
-          <div className="text-[11px] text-slate-500">Care coordination agent</div>
+          <div className="font-display text-[17px] font-semibold text-slate-900">CareFlow</div>
+          <div className="text-[11px] text-slate-500">Here to help you care for people</div>
         </div>
       </div>
       <nav className="flex-1 space-y-0.5 px-3">
@@ -37,7 +37,7 @@ export default function Sidebar() {
               href={href}
               className={clsx(
                 "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition",
-                active ? "bg-brand-50 text-brand-800" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                active ? "bg-amber-100/80 text-amber-950 shadow-sm" : "text-slate-600 hover:bg-amber-50 hover:text-slate-900"
               )}
             >
               <Icon className="h-4 w-4" />
@@ -46,9 +46,9 @@ export default function Sidebar() {
           );
         })}
       </nav>
-      <div className="m-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-[11px] leading-relaxed text-slate-600">
-        <div className="mb-1 font-semibold text-slate-700">Bounded autonomy</div>
-        CareFlow coordinates logistics. Pastoral, crisis and financial judgment stay with people.
+      <div className="m-3 rounded-xl border border-[#eadfcb] bg-white/80 p-3 text-[11px] leading-relaxed text-slate-600">
+        <div className="font-display mb-1 text-[12px] font-semibold text-slate-700">A gentle helper, not a replacement</div>
+        CareFlow handles the paperwork and logistics, so you can spend your time with people.
       </div>
     </aside>
   );

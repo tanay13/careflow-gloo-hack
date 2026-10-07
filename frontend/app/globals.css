@@ -7,12 +7,19 @@
 }
 
 body {
-  @apply bg-slate-50 text-slate-800 antialiased;
+  background-color: #faf7f1;
+  @apply text-slate-800 antialiased;
+}
+
+h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  @apply tracking-tight;
 }
 
 @layer components {
   .card {
-    @apply rounded-xl border border-slate-200 bg-white shadow-card;
+    border-color: #eadfcb;
+    @apply rounded-xl border bg-white shadow-card;
   }
   .card-header {
     @apply flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-3.5;
