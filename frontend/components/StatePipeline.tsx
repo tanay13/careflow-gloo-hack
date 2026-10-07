@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import type { CaseStatus } from "@/types";
+import { PIPELINE_LABELS, statusLabel } from "@/lib/friendly";
 
 const MAIN: { key: CaseStatus; label: string }[] = [
   { key: "NEW", label: "New" },
@@ -35,7 +36,7 @@ export default function StatePipeline({ status, visited }: { status: CaseStatus;
                 !current && !seen && "bg-slate-100 text-slate-400"
               )}
             >
-              {m.label}
+              {PIPELINE_LABELS[m.key] || m.label}
             </div>
             {i < MAIN.length - 1 && <div className={clsx("h-px w-2", seen ? "bg-brand-300" : "bg-slate-200")} />}
           </div>
@@ -44,7 +45,7 @@ export default function StatePipeline({ status, visited }: { status: CaseStatus;
       {off && (
         <div className={clsx("ml-2 whitespace-nowrap rounded-md px-2 py-1 text-[11px] font-semibold text-white",
           status === "ESCALATED" ? "bg-rose-600" : status === "ERROR" ? "bg-orange-600" : "bg-slate-500")}>
-          {status}
+          {statusLabel(status)}
         </div>
       )}
     </div>

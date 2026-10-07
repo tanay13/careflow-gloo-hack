@@ -10,7 +10,7 @@ function StatusPill({ s }: { s: string }) {
       s === "done" ? "border-slate-300 bg-slate-100 text-slate-700" :
         s === "sent_demo_outbox" ? "border-indigo-300 bg-indigo-50 text-indigo-800" :
           s === "draft" ? "border-slate-200 bg-white text-slate-600" : "border-orange-300 bg-orange-50 text-orange-800";
-  return <span className={clsx("chip", tone)}>{s === "sent_demo_outbox" ? "sent (demo outbox)" : s}</span>;
+  return <span className={clsx("chip", tone)}>{s === "sent_demo_outbox" ? "sent ✓" : s}</span>;
 }
 
 /** Real records created by approved tool executions (not UI state). */

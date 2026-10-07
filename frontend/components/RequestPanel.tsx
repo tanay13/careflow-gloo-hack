@@ -39,7 +39,7 @@ export function ExtractedNeeds({ c }: { c: CaseDetail }) {
     <div className="card">
       <div className="card-header">
         <div className="card-title">
-          <ListChecks className="h-4 w-4 text-brand-700" /> Extracted operational fields
+          <ListChecks className="h-4 w-4 text-brand-700" /> What CareFlow understood
         </div>
         {s.decision && (
           <span className={s.decision === "PASS" ? "chip border-emerald-300 bg-emerald-50 text-emerald-800" : "chip border-rose-300 bg-rose-50 text-rose-800"}>
@@ -101,13 +101,13 @@ export function ContextEvidence({ c }: { c: CaseDetail }) {
     <div className="card">
       <div className="card-header">
         <div className="card-title">
-          <Search className="h-4 w-4 text-brand-700" /> Tool evidence (what the agent saw)
+          <Search className="h-4 w-4 text-brand-700" /> How CareFlow chose
         </div>
       </div>
       <div className="card-body space-y-4 text-[13px]">
         {ctx.routing_rule && (
           <div>
-            <div className="label mb-1">staff.search · eligible candidates</div>
+            <div className="label mb-1">Pastors CareFlow could choose from</div>
             <div className="mb-1.5 text-[11.5px] text-slate-500">Rule: {ctx.routing_rule}</div>
             <div className="flex flex-wrap gap-1.5">
               {ctx.staff_candidates.map((s) => (
@@ -117,7 +117,7 @@ export function ContextEvidence({ c }: { c: CaseDetail }) {
               ))}
             </div>
             <details className="mt-2 text-[11.5px] text-slate-500">
-              <summary className="cursor-pointer">Excluded by policy ({ctx.staff_excluded.length})</summary>
+              <summary className="cursor-pointer">Why others weren't chosen ({ctx.staff_excluded.length})</summary>
               <ul className="mt-1 space-y-0.5">
                 {ctx.staff_excluded.map((s) => (
                   <li key={s.staff_id}>
@@ -130,7 +130,7 @@ export function ContextEvidence({ c }: { c: CaseDetail }) {
         )}
         {ctx.ride_tasks.length > 0 && (
           <div>
-            <div className="label mb-1">volunteer.search · per ride</div>
+            <div className="label mb-1">Drivers for each ride</div>
             {ctx.ride_tasks.map((rt) => (
               <div key={rt.task_key} className="mb-1">
                 <span className="font-medium text-slate-800">{rt.label}</span>{" "}
@@ -148,7 +148,7 @@ export function ContextEvidence({ c }: { c: CaseDetail }) {
         )}
         {ctx.resources.length > 0 && (
           <div>
-            <div className="label mb-1">resource.search · approved catalog</div>
+            <div className="label mb-1">Resources from the approved list</div>
             <ul className="space-y-0.5 text-[12px]">
               {ctx.resources.map((r) => (
                 <li key={r.resource_id} className={r.available && r.restrictions_satisfied ? "text-slate-700" : "text-slate-400"}>

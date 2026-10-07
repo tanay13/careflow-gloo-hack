@@ -5,6 +5,7 @@ import clsx from "clsx";
 import { AlertTriangle, BookOpen, CalendarClock, Car, Check, ChevronDown, Info, MessageSquareText, Package, ShieldCheck, UserCheck, X } from "lucide-react";
 import type { CaseDetail, Owner, Plan } from "@/types";
 import { fmtDateTime, humanize } from "@/lib/format";
+import { checkName, soften, triggerText } from "@/lib/friendly";
 import { Tag, VerifierBadge } from "./ui";
 
 function EvidenceRow({ ok, label }: { ok: boolean | undefined; label: string }) {
@@ -25,12 +26,12 @@ function OwnerCard({ o, title, primary }: { o: Owner; title: string; primary?: b
         <span className="font-mono text-[11px] text-slate-500">{o.staff_id}</span>
       </div>
       <div className="text-xs text-slate-600">{o.role}</div>
-      <p className="mt-2 text-xs leading-relaxed text-slate-700">{o.reason}</p>
+      <p className="mt-2 text-xs leading-relaxed text-slate-700">{soften(o.reason)}</p>
       <div className="mt-2 flex flex-wrap gap-1">
         <EvidenceRow ok={e.campus_match} label="campus" />
         <EvidenceRow ok={e.role_match} label="request type" />
-        <EvidenceRow ok={e.availability_checked} label="availability checked" />
-        {e.poc_match && <EvidenceRow ok label="weekly POC" />}
+        <EvidenceRow ok={e.availability_checked} label="times checked" />
+        {e.poc_match && <EvidenceRow ok label="on-call pastor" />}
         {(e.experience_match || []).map((x) => (
           <Tag key={x} tone="teal">{humanize(x)}</Tag>
         ))}
@@ -63,7 +64,7 @@ export default function PlanView({ c, plan }: { c: CaseDetail; plan: Plan }) {
         <div>
           <div className="text-[15px] font-semibold text-slate-900">{plan.objective}</div>
           <div className="mt-0.5 text-xs text-slate-500">
-            Plan v{plan.version} · {humanize(plan.trigger.replace("event:", "event: "))} · planner: {plan.planner_source} · {plan.status.replace(/_/g, " ")}
+            Plan v{plan.version} · {triggerText(plan.trigger)} · {plan.status.replace(/_/g, " ")}
           </div>
         </div>
         <VerifierBadge status={plan.verifier_status} />
@@ -71,13 +72,13 @@ export default function PlanView({ c, plan }: { c: CaseDetail; plan: Plan }) {
 
       {plan.rationale && (
         <div className="rounded-lg border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-[13px] leading-relaxed text-slate-700">
-          <span className="font-semibold text-slate-800">Rationale: </span>
-          {plan.rationale}
+          <span className="font-semibold text-slate-800">What was understood: </span>
+          {soften(plan.rationale)}
         </div>
       )}
 
       {(plan.owner || plan.backup_owner) && (
-        <Section icon={UserCheck} title="Proposed owner (from policy-eligible pool)">
+        <Section icon={UserCheck} title="Suggested pastor">
           <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
             {plan.owner && <OwnerCard o={plan.owner} title="Owner" primary />}
             {plan.backup_owner && <OwnerCard o={plan.backup_owner} title="Backup" />}
@@ -86,7 +87,7 @@ export default function PlanView({ c, plan }: { c: CaseDetail; plan: Plan }) {
       )}
 
       {plan.appointment_options.length > 0 && (
-        <Section icon={CalendarClock} title="Appointment options">
+        <Section icon={CalendarClock} title="Possible visit times">
           <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
             {plan.appointment_options.map((o) => (
               <div key={o.option_id} className="rounded-lg border border-slate-200 px-3 py-2.5">
@@ -97,7 +98,7 @@ export default function PlanView({ c, plan }: { c: CaseDetail; plan: Plan }) {
                 <div className="text-xs text-slate-600">
                   {c.names.staff[o.staff_id]} · {o.mode} · {Math.round((+new Date(o.end) - +new Date(o.start)) / 60000)} min
                 </div>
-                <div className="mt-1 text-[11px] text-slate-500">{o.reason}</div>
+                <div className="mt-1 text-[11px] text-slate-500">{soften(o.reason)}</div>
               </div>
             ))}
           </div>
@@ -115,7 +116,7 @@ export default function PlanView({ c, plan }: { c: CaseDetail; plan: Plan }) {
                     {t.label} <span className="font-normal text-slate-500">· appt {fmtDateTime(t.appointment_time)}</span>
                   </div>
                   <div className="text-xs text-slate-600">Pickup window {fmtDateTime(t.start)} · {t.location}</div>
-                  <div className="mt-0.5 text-[11px] text-slate-500">{t.reason}</div>
+                  <div className="mt-0.5 text-[11px] text-slate-500">{soften(t.reason)}</div>
                 </div>
                 <div className="text-right">
                   {t.volunteer_id ? (
@@ -135,7 +136,7 @@ export default function PlanView({ c, plan }: { c: CaseDetail; plan: Plan }) {
       )}
 
       {plan.resource_actions.length > 0 && (
-        <Section icon={Package} title="Resources (approved catalog only)">
+        <Section icon={Package} title="Helpful resources">
           <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
             {plan.resource_actions.map((r) => (
               <div key={r.resource_id} className="rounded-lg border border-slate-200 px-3 py-2.5">
@@ -150,7 +151,7 @@ export default function PlanView({ c, plan }: { c: CaseDetail; plan: Plan }) {
                   )}
                 </div>
                 <div className="font-mono text-[11px] text-slate-500">{r.resource_id} · {humanize(r.category)}</div>
-                <div className="mt-1 text-[11px] text-slate-500">{r.reason}</div>
+                <div className="mt-1 text-[11px] text-slate-500">{soften(r.reason)}</div>
               </div>
             ))}
           </div>
@@ -176,7 +177,7 @@ export default function PlanView({ c, plan }: { c: CaseDetail; plan: Plan }) {
       )}
 
       {plan.message_draft && (
-        <Section icon={MessageSquareText} title="Draft message to requester (not sent until approved)">
+        <Section icon={MessageSquareText} title="Message draft (stays unsent until you say so)">
           <div className="rounded-lg border border-dashed border-slate-300 bg-white px-3.5 py-3 text-[13px] leading-relaxed text-slate-700">
             {plan.message_draft}
           </div>
@@ -186,7 +187,7 @@ export default function PlanView({ c, plan }: { c: CaseDetail; plan: Plan }) {
       <div className="rounded-lg border border-slate-200">
         <button className="flex w-full items-center justify-between px-3.5 py-2.5 text-left" onClick={() => setShowChecks(!showChecks)}>
           <span className="flex items-center gap-1.5 text-[13px] font-semibold text-slate-800">
-            <ShieldCheck className="h-4 w-4 text-slate-500" /> Verifier checks ({plan.verifier_result?.checks?.length || 0})
+            <ShieldCheck className="h-4 w-4 text-slate-500" /> CareFlow's double-checks ({plan.verifier_result?.checks?.length || 0})
           </span>
           <ChevronDown className={clsx("h-4 w-4 text-slate-400 transition", showChecks && "rotate-180")} />
         </button>
@@ -196,8 +197,7 @@ export default function PlanView({ c, plan }: { c: CaseDetail; plan: Plan }) {
               <li key={i} className="flex gap-2 text-xs">
                 {ch.status === "pass" ? <Check className="h-3.5 w-3.5 shrink-0 text-emerald-600" /> :
                   <X className="h-3.5 w-3.5 shrink-0 text-rose-600" />}
-                <span className="font-mono text-[11px] text-slate-500">{ch.check}</span>
-                <span className="text-slate-700">{ch.detail}</span>
+                <span className="text-slate-700">{checkName(ch.check)}{ch.status !== "pass" ? ` — ${ch.detail}` : ""}</span>
               </li>
             ))}
           </ul>
