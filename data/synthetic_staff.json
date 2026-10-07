@@ -1,0 +1,172 @@
+{
+  "_note": "SYNTHETIC DEMO DATA. These people do not exist. Routing concepts (locality, experience, weekly Pastor on Call) reflect practitioner feedback from Flatirons; all names, assignments and tags are invented.",
+  "staff": [
+    {
+      "staff_id": "STF-001",
+      "name": "Jordan Lee",
+      "role": "Care Pastor",
+      "campuses": ["Lafayette"],
+      "approved_request_types": ["pastoral_conversation", "hospital_followup", "recovery_support"],
+      "experience_tags": ["hospital_care", "medical_recovery", "grief", "family_support"],
+      "active": true,
+      "is_current_poc": false
+    },
+    {
+      "staff_id": "STF-002",
+      "name": "Maya Okonkwo",
+      "role": "Associate Pastor",
+      "campuses": ["Lafayette"],
+      "approved_request_types": ["pastoral_conversation", "recovery_support", "marriage_family"],
+      "experience_tags": ["medical_recovery", "chronic_illness", "family_support"],
+      "active": true,
+      "is_current_poc": false
+    },
+    {
+      "staff_id": "STF-003",
+      "name": "Caleb Reyes",
+      "role": "Campus Pastor",
+      "campuses": ["Lafayette"],
+      "approved_request_types": ["pastoral_conversation", "hospital_followup"],
+      "experience_tags": ["hospital_care", "grief"],
+      "active": false,
+      "is_current_poc": false,
+      "_note": "Inactive (synthetic sabbatical) - must never be routed."
+    },
+    {
+      "staff_id": "STF-004",
+      "name": "Hannah Brooks",
+      "role": "Care Pastor",
+      "campuses": ["Denver"],
+      "approved_request_types": ["pastoral_conversation", "hospital_followup", "recovery_support", "grief_support"],
+      "experience_tags": ["hospital_care", "medical_recovery", "grief"],
+      "active": true,
+      "is_current_poc": false,
+      "_note": "Deliberately wide-open calendar; wrong campus for Lafayette requests (eval T02)."
+    },
+    {
+      "staff_id": "STF-005",
+      "name": "Daniel Kim",
+      "role": "Associate Pastor",
+      "campuses": ["Denver"],
+      "approved_request_types": ["pastoral_conversation", "marriage_family"],
+      "experience_tags": ["family_support", "young_adults"],
+      "active": true,
+      "is_current_poc": false
+    },
+    {
+      "staff_id": "STF-006",
+      "name": "Rebecca Torres",
+      "role": "Care Pastor",
+      "campuses": ["Longmont"],
+      "approved_request_types": ["pastoral_conversation", "hospital_followup", "recovery_support", "grief_support"],
+      "experience_tags": ["hospital_care", "grief", "medical_recovery"],
+      "active": true,
+      "is_current_poc": false
+    },
+    {
+      "staff_id": "STF-007",
+      "name": "Elijah Grant",
+      "role": "Associate Pastor",
+      "campuses": ["Longmont"],
+      "approved_request_types": ["pastoral_conversation", "marriage_family"],
+      "experience_tags": ["family_support", "marriage"],
+      "active": true,
+      "is_current_poc": false
+    },
+    {
+      "staff_id": "STF-008",
+      "name": "Marcus Bell",
+      "role": "Associate Pastor",
+      "campuses": ["Denver"],
+      "approved_request_types": ["urgent_callback", "pastoral_conversation", "hospital_followup"],
+      "experience_tags": ["hospital_care", "crisis_trained", "grief"],
+      "active": true,
+      "is_current_poc": true,
+      "_note": "Current weekly Pastor on Call (POC) in the synthetic rotation."
+    },
+    {
+      "staff_id": "STF-009",
+      "name": "Sofia Martinez",
+      "role": "Care Pastor",
+      "campuses": ["Aurora"],
+      "approved_request_types": ["pastoral_conversation", "hospital_followup", "recovery_support", "grief_support"],
+      "experience_tags": ["hospital_care", "grief", "spanish_speaking"],
+      "active": true,
+      "is_current_poc": false
+    },
+    {
+      "staff_id": "STF-010",
+      "name": "Nathan Price",
+      "role": "Associate Pastor",
+      "campuses": ["Aurora"],
+      "approved_request_types": ["pastoral_conversation", "marriage_family"],
+      "experience_tags": ["family_support", "financial_hardship"],
+      "active": true,
+      "is_current_poc": false
+    },
+    {
+      "staff_id": "STF-011",
+      "name": "Abigail Chen",
+      "role": "Associate Pastor",
+      "campuses": ["Lafayette", "Longmont"],
+      "approved_request_types": ["urgent_callback", "pastoral_conversation", "recovery_support"],
+      "experience_tags": ["crisis_trained", "medical_recovery"],
+      "active": true,
+      "is_current_poc": false,
+      "_note": "Designated backup POC for the synthetic week."
+    },
+    {
+      "staff_id": "STF-012",
+      "name": "Isaac Whitman",
+      "role": "Care Pastor",
+      "campuses": ["West/Golden"],
+      "approved_request_types": ["pastoral_conversation", "hospital_followup", "recovery_support", "grief_support"],
+      "experience_tags": ["hospital_care", "medical_recovery", "grief"],
+      "active": true,
+      "is_current_poc": false
+    },
+    {
+      "staff_id": "STF-013",
+      "name": "Lydia Foster",
+      "role": "Associate Pastor",
+      "campuses": ["West/Golden"],
+      "approved_request_types": ["pastoral_conversation", "marriage_family"],
+      "experience_tags": ["family_support"],
+      "active": false,
+      "is_current_poc": false
+    },
+    {
+      "staff_id": "STF-014",
+      "name": "Victor Osei",
+      "role": "Student Pastor",
+      "campuses": ["Lafayette", "Denver"],
+      "approved_request_types": ["student_family"],
+      "experience_tags": ["students", "minor_safeguarding"],
+      "active": true,
+      "is_current_poc": false,
+      "_note": "Minor-related requests escalate (synthetic policy); never auto-routed."
+    },
+    {
+      "staff_id": "STF-015",
+      "name": "Grace Whitfield",
+      "role": "Benevolence Coordinator",
+      "campuses": ["Lafayette", "Denver", "Longmont", "Aurora", "West/Golden"],
+      "approved_request_types": ["financial_referral"],
+      "experience_tags": ["benevolence_process"],
+      "active": true,
+      "is_current_poc": false,
+      "_note": "Receives referrals only. CareFlow never approves or denies assistance."
+    },
+    {
+      "staff_id": "STF-016",
+      "name": "Dana Ellison",
+      "role": "Care Coordinator",
+      "campuses": ["Lafayette", "Denver", "Longmont", "Aurora", "West/Golden"],
+      "approved_request_types": ["triage", "clarification"],
+      "experience_tags": ["care_operations"],
+      "active": true,
+      "is_current_poc": false,
+      "_note": "Human escalation target for the synthetic demo policy."
+    }
+  ]
+}

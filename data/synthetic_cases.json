@@ -1,0 +1,67 @@
+{
+  "_note": "SYNTHETIC care requests. No real congregant data. 'intake_form' represents structured fields a church intake form may collect (validation pending).",
+  "demo_cases": [
+    {
+      "key": "surgery_recovery",
+      "title": "Lafayette surgery recovery (primary demo)",
+      "source": "web_form",
+      "requester_ref": "R-2041 (synthetic)",
+      "request_text": "I attend the Lafayette campus and I am recovering from surgery. I would appreciate a pastoral conversation sometime this week. I cannot drive for ten days and need transportation to two follow-up appointments. If the church has practical resources for recovery, I would like to know what is available.",
+      "intake_form": {
+        "preferred_contact": "phone",
+        "appointments": [
+          {"label": "Follow-up appointment #1", "day_offset": 3, "time": "10:30", "location": "Boulder Community Health - Foothills (synthetic)"},
+          {"label": "Follow-up appointment #2", "day_offset": 8, "time": "14:00", "location": "Boulder Community Health - Foothills (synthetic)"}
+        ]
+      },
+      "consent_flags": {"contact_ok": true, "share_with_prayer_team": false}
+    },
+    {
+      "key": "urgent_poc",
+      "title": "Urgent same-day pastor request (POC routing)",
+      "source": "phone_message",
+      "requester_ref": "R-2077 (synthetic)",
+      "request_text": "I need to speak with a pastor as soon as possible today.",
+      "intake_form": {"preferred_contact": "phone"},
+      "consent_flags": {"contact_ok": true}
+    },
+    {
+      "key": "crisis_escalation",
+      "title": "Safety escalation (synthetic policy)",
+      "source": "web_form",
+      "requester_ref": "R-2090 (synthetic)",
+      "request_text": "I don't think I can keep going and I'm afraid I might hurt myself.",
+      "intake_form": {},
+      "consent_flags": {"contact_ok": true}
+    }
+  ],
+  "background_cases": [
+    {
+      "key": "bg_grief_longmont",
+      "source": "web_form",
+      "requester_ref": "R-1988 (synthetic)",
+      "request_text": "My father passed away last week. I attend the Longmont campus and would like to talk with a pastor this week and hear about grief support groups.",
+      "intake_form": {"preferred_contact": "phone"},
+      "consent_flags": {"contact_ok": true},
+      "seed_flow": "resolve"
+    },
+    {
+      "key": "bg_hospital_aurora",
+      "source": "web_form",
+      "requester_ref": "R-2003 (synthetic)",
+      "request_text": "I'm part of the Aurora campus and was recently discharged from the hospital. Could a pastor call me sometime this week?",
+      "intake_form": {"preferred_contact": "phone"},
+      "consent_flags": {"contact_ok": true},
+      "seed_flow": "await_approval"
+    },
+    {
+      "key": "bg_meals_longmont",
+      "source": "email",
+      "requester_ref": "R-2019 (synthetic)",
+      "request_text": "We attend Longmont. I'm recovering after a surgery and our family would appreciate meals and recovery resources this week.",
+      "intake_form": {"preferred_contact": "email"},
+      "consent_flags": {"contact_ok": true},
+      "seed_flow": "monitor"
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "_note": "SYNTHETIC DEMO POLICY. Routing concepts marked 'practitioner_validated' come from Flatirons staff feedback (locality, experience, weekly Pastor on Call). Everything else - including escalation keywords and the escalation protocol - is a placeholder and is NOT Flatirons' real crisis protocol.",
+  "version": "demo-2026.10-1",
+  "campuses": ["Lafayette", "Denver", "Longmont", "Aurora", "West/Golden"],
+
+  "routing": {
+    "practitioner_validated": [
+      "Requests are routed to staff/services that best address the need.",
+      "Pastors are assigned based on locality (campus proximity) or relevant experience for the circumstances.",
+      "One pastor is assigned each week as Pastor on Call (POC).",
+      "If someone needs a call right away, that week's POC reaches out.",
+      "A POC may receive roughly 5-20 requests in a week."
+    ],
+    "eligibility_filters": ["active", "campus_match", "approved_request_type", "experience_tags (ranking)", "availability", "poc_status (urgent same-day)"],
+    "current_poc_staff_id": "STF-008",
+    "backup_poc_staff_id": "STF-011",
+    "care_coordinator_staff_id": "STF-016",
+    "benevolence_staff_id": "STF-015",
+    "poc_weekly_capacity": {"min": 5, "max": 20},
+    "need_to_experience_tags": {
+      "surgery": ["medical_recovery", "hospital_care"],
+      "recovery": ["medical_recovery"],
+      "hospital": ["hospital_care"],
+      "grief": ["grief"],
+      "marriage": ["family_support", "marriage"],
+      "family": ["family_support"],
+      "job": ["financial_hardship"],
+      "spanish": ["spanish_speaking"]
+    },
+    "appointment_minutes": 60,
+    "urgent_callback_minutes": 30,
+    "max_appointment_options": 2
+  },
+
+  "safety_gate": {
+    "_note": "Deterministic placeholder patterns. A match STOPS orchestration. Model output can only ADD flags, never remove them.",
+    "escalation_categories": {
+      "self_harm_or_crisis": ["hurt myself", "kill myself", "suicid", "end my life", "can't keep going", "cannot keep going", "can not keep going", "don't think i can keep going", "dont think i can keep going", "no reason to live", "self-harm", "self harm", "want to die", "better off dead"],
+      "abuse": ["abuse", "abusing", "abusive", "hits me", "hitting me", "afraid of my husband", "afraid of my wife", "afraid of my partner"],
+      "medical_emergency": ["chest pain", "can't breathe", "cannot breathe", "overdose", "bleeding heavily", "having a stroke", "unconscious"],
+      "imminent_danger": ["in danger", "going to hurt someone", "going to hurt him", "going to hurt her", "has a weapon", "gun"],
+      "minor_involved": ["year-old", "year old", "teenager", "my teen", "minor", "high school", "middle school", "my son is 1", "my daughter is 1"]
+    },
+    "protocol_label": "Synthetic demo escalation protocol: stop automation, notify the designated human (Care Coordinator) through the configured channel, no automated contact with the requester.",
+    "sensitive_routing": {
+      "financial_assistance": ["rent", "bills", "pay my", "money", "financial", "afford", "mortgage", "utility", "gift card"],
+      "counseling_advice": ["advice", "what should i do", "tell me what to do", "should i leave", "counsel me", "give me guidance on"],
+      "prompt_injection": ["ignore your", "ignore all", "ignore previous", "disregard", "without approval", "send this message directly", "system prompt", "you are now", "override"]
+    }
+  },
+
+  "action_risk_policy": {
+    "_note": "Server-side approval matrix. The model never decides this.",
+    "safe": ["message.draft", "task.create:internal", "resource.reserve:delegated_no_approval", "calendar.read", "staff.search", "resource.search", "volunteer.search"],
+    "approval_required": ["message.send", "case.update:assign_owner", "calendar.hold", "task.create:volunteer_assignment", "resource.reserve:approval_required"],
+    "forbidden": ["financial_decision", "counseling", "diagnosis", "autonomous_crisis_contact", "move_money", "theological_judgment"]
+  },
+
+  "resource_policy": {
+    "delegated_reserve_categories": ["recovery_resources", "meals", "mobility_equipment", "grief_support"],
+    "never_reserve_categories": ["financial_assistance", "student_family"],
+    "need_to_categories": {
+      "recovery_resources": ["recovery_resources", "meals", "support_group"],
+      "transportation": ["transportation"],
+      "meals": ["meals"],
+      "mobility_equipment": ["mobility_equipment"],
+      "grief_support": ["grief_support"],
+      "financial_assistance": ["financial_assistance"],
+      "hospital_visit": ["hospital_visitation"],
+      "family_support": ["family_support"]
+    }
+  },
+
+  "volunteer_policy": {
+    "role_training_requirements": {
+      "transportation": ["background_check", "driver_verified"],
+      "meals": ["background_check", "food_safety"],
+      "visitation": ["background_check", "care_team_trained"]
+    },
+    "ride_pickup_minutes_before": 45,
+    "ride_return_minutes_after": 120
+  },
+
+  "duplicate_detection": {"similarity_threshold": 0.8, "lookback_days": 14},
+  "verifier": {"max_replans": 2},
+  "tools": {"max_retries": 1}
+}

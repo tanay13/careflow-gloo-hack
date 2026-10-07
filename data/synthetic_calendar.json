@@ -1,0 +1,36 @@
+{
+  "_note": "SYNTHETIC free/busy blocks only (no event contents). day_offset is relative to Monday of the demo week. Demo clock defaults to Tuesday (day_offset 1) 09:00. Conflicts are deliberate.",
+  "working_hours": {"start": "09:00", "end": "17:00", "weekdays": [0, 1, 2, 3, 4]},
+  "busy": [
+    {"staff_id": "STF-001", "day_offset": 1, "start": "09:00", "end": "17:00"},
+    {"staff_id": "STF-001", "day_offset": 2, "start": "09:00", "end": "10:30"},
+    {"staff_id": "STF-001", "day_offset": 2, "start": "12:00", "end": "13:00"},
+    {"staff_id": "STF-001", "day_offset": 2, "start": "14:30", "end": "17:00"},
+    {"staff_id": "STF-001", "day_offset": 3, "start": "09:00", "end": "13:00"},
+    {"staff_id": "STF-001", "day_offset": 4, "start": "09:00", "end": "17:00"},
+
+    {"staff_id": "STF-002", "day_offset": 1, "start": "09:00", "end": "15:00"},
+    {"staff_id": "STF-002", "day_offset": 2, "start": "09:00", "end": "17:00"},
+    {"staff_id": "STF-002", "day_offset": 3, "start": "10:00", "end": "16:00"},
+
+    {"staff_id": "STF-004", "day_offset": 1, "start": "09:00", "end": "09:30"},
+
+    {"staff_id": "STF-006", "day_offset": 1, "start": "09:00", "end": "12:00"},
+    {"staff_id": "STF-006", "day_offset": 2, "start": "13:00", "end": "17:00"},
+
+    {"staff_id": "STF-007", "day_offset": 1, "start": "09:00", "end": "17:00"},
+
+    {"staff_id": "STF-008", "day_offset": 1, "start": "09:00", "end": "10:30"},
+    {"staff_id": "STF-008", "day_offset": 1, "start": "12:00", "end": "13:00"},
+    {"staff_id": "STF-008", "day_offset": 2, "start": "09:00", "end": "12:00"},
+
+    {"staff_id": "STF-009", "day_offset": 1, "start": "13:00", "end": "17:00"},
+    {"staff_id": "STF-010", "day_offset": 2, "start": "09:00", "end": "12:00"},
+
+    {"staff_id": "STF-011", "day_offset": 1, "start": "09:00", "end": "11:00"},
+    {"staff_id": "STF-011", "day_offset": 3, "start": "09:00", "end": "17:00"},
+
+    {"staff_id": "STF-012", "day_offset": 1, "start": "09:00", "end": "13:00"},
+    {"staff_id": "STF-016", "day_offset": 1, "start": "09:00", "end": "10:00"}
+  ]
+}
