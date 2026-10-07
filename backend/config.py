@@ -28,22 +28,22 @@ def _bool(name: str, default: bool) -> bool:
 
 @dataclass(frozen=True)
 class Settings:
-    database_url: str = os.getenv("DATABASE_URL", f"sqlite:///{BACKEND_DIR / 'careflow.db'}")
+    database_url: str = os.getenv("DATABASE_URL") or f"sqlite:///{BACKEND_DIR / 'careflow.db'}"
     use_mock_llm: bool = _bool("USE_MOCK_LLM", True)
     llm_api_key: str = os.getenv("LLM_API_KEY", "")
     llm_base_url: str = os.getenv("LLM_BASE_URL", "")
     llm_model: str = os.getenv("LLM_MODEL", "")
-    llm_timeout_s: float = float(os.getenv("LLM_TIMEOUT_S", "25"))
+    llm_timeout_s: float = float(os.getenv("LLM_TIMEOUT_S") or "25")
     # Cost per 1K tokens (USD) used for the cost estimate shown in the UI.
-    llm_cost_input_per_1k: float = float(os.getenv("LLM_COST_INPUT_PER_1K", "0.00015"))
-    llm_cost_output_per_1k: float = float(os.getenv("LLM_COST_OUTPUT_PER_1K", "0.0006"))
+    llm_cost_input_per_1k: float = float(os.getenv("LLM_COST_INPUT_PER_1K") or "0.00015")
+    llm_cost_output_per_1k: float = float(os.getenv("LLM_COST_OUTPUT_PER_1K") or "0.0006")
     # Visible pacing between orchestration steps so a live audience can follow
     # the agent. Real backend state changes at each step; set 0 for evals.
-    demo_step_delay_ms: int = int(os.getenv("DEMO_STEP_DELAY_MS", "450"))
+    demo_step_delay_ms: int = int(os.getenv("DEMO_STEP_DELAY_MS") or "450")
     # Fixed demo clock for deterministic schedules (ISO local time, America/Denver assumed).
-    demo_now: str = os.getenv("DEMO_NOW", "2026-10-06T09:00:00")
-    approval_secret: str = os.getenv("APPROVAL_SECRET", "careflow-demo-secret-change-me")
-    cors_origins: str = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000")
+    demo_now: str = os.getenv("DEMO_NOW") or "2026-10-06T09:00:00"
+    approval_secret: str = os.getenv("APPROVAL_SECRET") or "careflow-demo-secret-change-me"
+    cors_origins: str = os.getenv("CORS_ORIGINS") or "http://localhost:3000,http://127.0.0.1:3000"
 
 
 settings = Settings()
