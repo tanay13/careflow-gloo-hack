@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { AlertTriangle, CheckCircle2, CircleDot, Loader2, OctagonX, PauseCircle, XCircle } from "lucide-react";
 import type { CaseStatus } from "@/types";
+import { statusLabel } from "@/lib/friendly";
 
 const STATUS_STYLE: Record<string, string> = {
   NEW: "border-sky-200 bg-sky-50 text-sky-800",
@@ -22,16 +23,16 @@ const STATUS_STYLE: Record<string, string> = {
 export function StatusBadge({ status, className }: { status: CaseStatus | string; className?: string }) {
   return (
     <span className={clsx("chip whitespace-nowrap font-semibold", STATUS_STYLE[status] || STATUS_STYLE.NEW, className)}>
-      {status.replace(/_/g, " ")}
+      {statusLabel(status)}
     </span>
   );
 }
 
 export function RiskBadge({ risk }: { risk: string }) {
   if (risk === "approval_required")
-    return <span className="chip border-amber-300 bg-amber-50 text-amber-900">Requires approval</span>;
-  if (risk === "forbidden") return <span className="chip border-rose-300 bg-rose-50 text-rose-800">Forbidden · human only</span>;
-  return <span className="chip border-teal-200 bg-teal-50 text-teal-800">Safe · reversible</span>;
+    return <span className="chip border-amber-300 bg-amber-50 text-amber-900">Needs your OK</span>;
+  if (risk === "forbidden") return <span className="chip border-rose-300 bg-rose-50 text-rose-800">Only people do this</span>;
+  return <span className="chip border-teal-200 bg-teal-50 text-teal-800">Safe to do</span>;
 }
 
 export function VerifierBadge({ status }: { status: string | null }) {
@@ -41,7 +42,8 @@ export function VerifierBadge({ status }: { status: string | null }) {
     REPLAN: "border-amber-300 bg-amber-50 text-amber-900",
     ESCALATE: "border-rose-300 bg-rose-50 text-rose-800",
   }[status];
-  return <span className={clsx("chip font-semibold", s)}>Verifier: {status}</span>;
+  const label = { PASS: "Checked · all good", REPLAN: "Checked · needs work", ESCALATE: "Checked · needs a person" }[status];
+  return <span className={clsx("chip font-semibold", s)}>{label}</span>;
 }
 
 export function ExecBadge({ status }: { status: string }) {

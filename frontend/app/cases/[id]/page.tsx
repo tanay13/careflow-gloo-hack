@@ -74,9 +74,9 @@ export default function CasePage({ params }: { params: Promise<{ id: string }> }
 
   const TABS: { key: TabKey; label: string; badge?: number }[] = [
     { key: "plan", label: "Plan & approval", badge: c.status === "AWAITING_APPROVAL" ? pendingApprovals : undefined },
-    { key: "request", label: "Request & evidence" },
-    { key: "changes", label: "Executed changes" },
-    { key: "audit", label: "Audit log" },
+    { key: "request", label: "The request" },
+    { key: "changes", label: "What's been done" },
+    { key: "audit", label: "Full record" },
   ];
 
   return (
@@ -88,14 +88,14 @@ export default function CasePage({ params }: { params: Promise<{ id: string }> }
             <ArrowLeft className="h-3.5 w-3.5" /> Dashboard
           </Link>
           <div className="flex flex-wrap items-center gap-2.5">
-            <h1 className="font-mono text-2xl font-semibold text-slate-900">{c.case_id}</h1>
+            <h1 className="text-2xl text-slate-900"><span className="font-sans text-lg font-medium text-slate-500">Care request </span><span className="font-mono font-semibold">{c.case_id}</span></h1>
             <StatusBadge status={c.status} className="text-[13px]" />
             {c.campus && <Tag tone="slate">{c.campus} campus</Tag>}
             {c.urgent && <Tag tone="amber"><Zap className="h-3 w-3" /> same-day</Tag>}
             {current && <Tag tone="indigo">plan v{current.version}</Tag>}
           </div>
           <div className="mt-1 text-xs text-slate-500">
-            Created {fmtShort(c.created_at)} · {humanize(c.source)} · owner: {c.owner_name || "not yet assigned"}
+            Shared {fmtShort(c.created_at)} · {humanize(c.source)} · {c.owner_name ? `looked after by ${c.owner_name}` : "no one assigned yet — CareFlow will suggest someone"}
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -215,10 +215,10 @@ export default function CasePage({ params }: { params: Promise<{ id: string }> }
                     ))}
                   </div>
                 )}
-                <div className="card"><div className="card-header"><div className="card-title"><ClipboardCheck className="h-4 w-4 text-amber-600" /> Human review</div></div>
+                <div className="card"><div className="card-header"><div className="card-title"><ClipboardCheck className="h-4 w-4 text-amber-600" /> Your review</div></div>
                   <div className="card-body"><ApprovalPanel c={c} plan={shown} onDone={reload} /></div>
                 </div>
-                <div className="card"><div className="card-header"><div className="card-title"><ListChecks className="h-4 w-4 text-brand-700" /> Proposed care logistics plan</div></div>
+                <div className="card"><div className="card-header"><div className="card-title"><ListChecks className="h-4 w-4 text-brand-700" /> The care plan</div></div>
                   <div className="card-body"><PlanView c={c} plan={shown} /></div>
                 </div>
               </div>
@@ -256,8 +256,8 @@ export default function CasePage({ params }: { params: Promise<{ id: string }> }
           {tab === "audit" && (
             <div className="card overflow-hidden">
               <div className="card-header">
-                <div className="card-title">Append-only audit log · {c.audit.length} events</div>
-                <span className="text-xs text-slate-500">UPDATE/DELETE blocked by database triggers</span>
+                <div className="card-title">Full record · {c.audit.length} entries</div>
+                <span className="text-xs text-slate-500">Nothing here can be changed afterwards</span>
               </div>
               <AuditTable events={c.audit} />
             </div>
@@ -267,7 +267,7 @@ export default function CasePage({ params }: { params: Promise<{ id: string }> }
         <div className="space-y-4 xl:sticky xl:top-4 xl:self-start">
           <div className="card">
             <div className="card-header">
-              <div className="card-title"><Radar className="h-4 w-4 text-brand-700" /> Agent workflow</div>
+              <div className="card-title"><Radar className="h-4 w-4 text-brand-700" /> What CareFlow is doing</div>
               {c.is_running && <span className="flex items-center gap-1.5 text-xs text-brand-700"><span className="pulse-dot h-2 w-2 rounded-full bg-brand-600" /> live</span>}
             </div>
             <div ref={timelineRef} className="card-body max-h-[62vh] overflow-y-auto">

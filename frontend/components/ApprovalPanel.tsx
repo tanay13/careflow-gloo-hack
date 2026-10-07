@@ -5,6 +5,7 @@ import clsx from "clsx";
 import { Ban, CheckCheck, ClipboardCheck, Lock, RefreshCw, ShieldAlert, ShieldCheck, Undo2, UserRoundCog } from "lucide-react";
 import type { Action, CaseDetail, Plan } from "@/types";
 import { api } from "@/lib/api";
+import { soften } from "@/lib/friendly";
 import { ErrorNote, ExecBadge } from "./ui";
 
 const BOUNDARIES = [
@@ -30,14 +31,10 @@ function ActionRow({ a, checked, rejected, onToggle, onReject, reassign, onReass
         <input id={id} type="checkbox" className="mt-0.5 h-4 w-4 rounded border-slate-300 text-brand-700"
           checked={checked && !rejected} disabled={disabled || rejected} onChange={onToggle} />
         <label htmlFor={id} className="min-w-0 flex-1 cursor-pointer">
-          <div className={clsx("text-[13px] font-medium text-slate-900", rejected && "line-through decoration-rose-400")}>{a.title}</div>
-          {a.type !== "message.send" && a.description && <div className="mt-0.5 line-clamp-2 text-[11.5px] text-slate-500">{a.description}</div>}
+          <div className={clsx("text-[13px] font-medium text-slate-900", rejected && "line-through decoration-rose-400")}>{a.title.replace("Provisional hold", "Held visit time")}</div>
+          {a.type !== "message.send" && a.description && <div className="mt-0.5 line-clamp-2 text-[11.5px] text-slate-500">{soften(a.description)}</div>}
           <div className="mt-1 flex flex-wrap items-center gap-1.5 text-[10.5px] text-slate-500">
-            <span className="font-mono">{a.type}</span>
-            <span>·</span>
-            <span className={a.reversible ? "text-slate-500" : "font-semibold text-rose-700"}>{a.reversible ? "reversible" : "irreversible"}</span>
-            <span>·</span>
-            <span className="font-mono">{a.action_id}</span>
+            <span className={a.reversible ? "" : "font-semibold text-rose-700"}>{a.reversible ? "Can be undone" : "Can't be undone — always needs your OK"}</span>
           </div>
         </label>
         <button type="button" disabled={disabled} onClick={onReject}
@@ -49,7 +46,7 @@ function ActionRow({ a, checked, rejected, onToggle, onReject, reassign, onReass
         <div className="mt-2 flex items-center gap-2 pl-7">
           <UserRoundCog className="h-3.5 w-3.5 text-slate-500" />
           <select className="input max-w-xs py-1 text-xs" value={reassign || ""} disabled={disabled} onChange={(e) => onReassign(e.target.value)}>
-            <option value="">Reassign to another eligible staff member…</option>
+            <option value="">Suggest someone else instead…</option>
             {candidates.map((c) => <option key={c.staff_id} value={c.staff_id}>{c.name} ({c.staff_id})</option>)}
           </select>
         </div>
@@ -133,11 +130,10 @@ export default function ApprovalPanel({ c, plan, onDone }: { c: CaseDetail; plan
           <ClipboardCheck className="mt-0.5 h-5 w-5 shrink-0 text-amber-700" />
           <div className="text-sm text-amber-900">
             <div className="font-semibold">
-              Your decision is needed: {needApproval.length} consequential action{needApproval.length === 1 ? "" : "s"}
-              {plan.version > 1 ? ` (new in plan v${plan.version})` : ""}
+              Your decision is needed{plan.version > 1 ? ` — only what's new in plan v${plan.version}` : ""}: {needApproval.length} thing{needApproval.length === 1 ? "" : "s"} to look over
             </div>
             <div className="text-[13px]">
-              Nothing below has run. CareFlow executes only what you approve; external messages are irreversible and always gated.
+              The legwork is done and nothing has gone out yet. CareFlow will only do what you tick below — messages to people always wait for you.
             </div>
           </div>
         </div>
@@ -150,8 +146,8 @@ export default function ApprovalPanel({ c, plan, onDone }: { c: CaseDetail; plan
       <div className="grid grid-cols-1 gap-4 2xl:grid-cols-3">
         <div className="space-y-2 2xl:col-span-2">
           <div className="flex items-center gap-2 text-[13px] font-semibold text-amber-900">
-            <Lock className="h-4 w-4" /> Requires approval
-            <span className="text-xs font-normal text-slate-500">external communication · staff assignment · holds · volunteer commitments</span>
+            <Lock className="h-4 w-4" /> For you to decide
+            <span className="text-xs font-normal text-slate-500">messages to people · choosing someone · visit times · volunteer rides</span>
           </div>
           {needApproval.length === 0 && <div className="text-xs text-slate-500">No consequential actions pending.</div>}
           {needApproval.map((a) => (
@@ -161,8 +157,8 @@ export default function ApprovalPanel({ c, plan, onDone }: { c: CaseDetail; plan
           ))}
 
           <div className="flex items-center gap-2 pt-3 text-[13px] font-semibold text-teal-900">
-            <ShieldCheck className="h-4 w-4" /> Safe &amp; reversible
-            <span className="text-xs font-normal text-slate-500">policy-permitted · pre-selected · runs with your submission</span>
+            <ShieldCheck className="h-4 w-4" /> Safe to go ahead
+            <span className="text-xs font-normal text-slate-500">simple, undoable tasks · included when you submit</span>
           </div>
           {safe.length === 0 && <div className="text-xs text-slate-500">None.</div>}
           {safe.map((a) => (
@@ -173,7 +169,7 @@ export default function ApprovalPanel({ c, plan, onDone }: { c: CaseDetail; plan
 
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-[13px] font-semibold text-rose-900">
-            <ShieldAlert className="h-4 w-4" /> Forbidden for CareFlow
+            <ShieldAlert className="h-4 w-4" /> Only people do this
           </div>
           <div className="rounded-lg border border-rose-200 bg-rose-50/50 p-3">
             {forbiddenActions.length > 0 && (
@@ -190,7 +186,7 @@ export default function ApprovalPanel({ c, plan, onDone }: { c: CaseDetail; plan
             <ul className="mt-1 space-y-0.5 text-[12px] text-rose-900">
               {BOUNDARIES.map((b) => <li key={b}>· {b}</li>)}
             </ul>
-            <div className="mt-2 text-[10.5px] text-rose-700">Enforced by server-side tool permissions, not by prompt.</div>
+            <div className="mt-2 text-[10.5px] text-rose-700">CareFlow is technically unable to do these — they stay with people, always.</div>
           </div>
         </div>
       </div>
@@ -199,11 +195,11 @@ export default function ApprovalPanel({ c, plan, onDone }: { c: CaseDetail; plan
         <div className="space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-3.5">
           <div className="grid grid-cols-1 gap-3 md:grid-cols-[240px_1fr]">
             <div>
-              <label className="label">Reviewer</label>
+              <label className="label">Your name</label>
               <input className="input mt-1" value={reviewer} onChange={(e) => setReviewer(e.target.value)} />
             </div>
             <div>
-              <label className="label">Feedback to the agent (optional)</label>
+              <label className="label">Note for CareFlow (optional)</label>
               <input className="input mt-1" value={feedback} onChange={(e) => setFeedback(e.target.value)}
                 placeholder="e.g. Prefer an in-person visit; requester knows Maya" />
             </div>
@@ -212,13 +208,13 @@ export default function ApprovalPanel({ c, plan, onDone }: { c: CaseDetail; plan
           <div className="flex flex-wrap items-center justify-end gap-2">
             {willReplan && <span className="mr-auto text-xs text-amber-800">Owner change will trigger a re-plan with your feedback.</span>}
             <button className="btn-secondary" disabled={busy} onClick={() => submit("replan")}>
-              <RefreshCw className="h-4 w-4" /> Request re-plan
+              <RefreshCw className="h-4 w-4" /> Ask for a new plan
             </button>
             <button className="btn-secondary" disabled={busy || (nSel === 0 && !willReplan)} onClick={() => submit("selected")}>
-              <ClipboardCheck className="h-4 w-4" /> Approve selected ({nSel})
+              <ClipboardCheck className="h-4 w-4" /> Approve ticked ({nSel})
             </button>
             <button className="btn-amber" disabled={busy} onClick={() => submit("all")}>
-              <CheckCheck className="h-4 w-4" /> Approve all permitted ({pending.length - rejected.size})
+              <CheckCheck className="h-4 w-4" /> Approve all ({pending.length - rejected.size})
             </button>
           </div>
         </div>
@@ -226,7 +222,7 @@ export default function ApprovalPanel({ c, plan, onDone }: { c: CaseDetail; plan
 
       {decided.length > 0 && (
         <div>
-          <div className="mb-1.5 text-[13px] font-semibold text-slate-700">Decisions &amp; execution in this version</div>
+          <div className="mb-1.5 text-[13px] font-semibold text-slate-700">What's been decided so far</div>
           <ul className="divide-y divide-slate-100 rounded-lg border border-slate-200">
             {decided.map((a) => (
               <li key={a.action_id} className="flex items-center justify-between gap-3 px-3 py-2 text-[12.5px]">
