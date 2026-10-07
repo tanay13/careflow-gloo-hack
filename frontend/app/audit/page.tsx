@@ -23,9 +23,9 @@ export default function AuditPage() {
     <div className="space-y-5">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-semibold text-slate-900"><ScrollText className="h-6 w-6 text-brand-700" /> Audit log</h1>
+          <h1 className="flex items-center gap-2 text-2xl font-semibold text-slate-900"><ScrollText className="h-6 w-6 text-brand-700" /> Full record</h1>
           <p className="mt-1 text-sm text-slate-500">
-            Append-only record of what the agent saw, decided, proposed, executed and escalated. The database rejects updates and deletes.
+            Every step CareFlow takes, written down where everyone can see it. Nothing here can be edited or deleted afterwards.
           </p>
         </div>
         <div className="flex gap-2">
@@ -37,8 +37,8 @@ export default function AuditPage() {
       </div>
       {error && <ErrorNote message={error} />}
       <div className="flex gap-3 text-xs text-slate-600">
-        <span className="chip border-slate-200 bg-white">{events.length} events shown</span>
-        <span className="chip border-rose-200 bg-rose-50 text-rose-800">{blocked} blocked by server-side policy</span>
+        <span className="chip border-slate-200 bg-white">{events.length} entries</span>
+        <span className="chip border-rose-200 bg-rose-50 text-rose-800">{blocked} stopped for safety</span>
       </div>
       <div className="card overflow-hidden">
         <AuditTable events={events} showCase />

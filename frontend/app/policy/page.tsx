@@ -24,9 +24,9 @@ export default function PolicyPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-900">Policy &amp; tools</h1>
+        <h1 className="text-2xl font-semibold text-slate-900">How CareFlow works</h1>
         <p className="mt-1 text-sm text-slate-500">
-          Deterministic rules the agent cannot change. Policy version <span className="font-mono">{policy.version}</span> · model:{" "}
+          The guardrails CareFlow cannot change, and the helpers it is allowed to use. Policy version <span className="font-mono">{policy.version}</span> · model:{" "}
           <span className="font-mono">{config?.provider} / {config?.model}</span>
         </p>
       </div>

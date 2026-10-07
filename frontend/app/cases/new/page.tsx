@@ -103,9 +103,9 @@ export default function NewCasePage() {
   return (
     <div className="mx-auto max-w-5xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-900">New care request</h1>
+        <h1 className="text-2xl font-semibold text-slate-900">How can we help?</h1>
         <p className="mt-1 text-sm text-slate-500">
-          Simulates an intake form submission. The request text is stored verbatim and treated as untrusted data.
+          Write down what someone needs, in your own words. CareFlow will sort out the campus, the people, the rides and the resources.
         </p>
       </div>
 
@@ -194,7 +194,7 @@ export default function NewCasePage() {
           </div>
 
           <div>
-            <label className="label">Consent flags recorded by the intake channel</label>
+            <label className="label">Permissions from the intake form</label>
             <div className="mt-2 flex flex-wrap gap-4 text-sm">
               {[
                 ["contact_ok", "OK to contact requester"],

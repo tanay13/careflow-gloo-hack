@@ -65,9 +65,9 @@ export default function EvaluationsPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-semibold text-slate-900"><FlaskConical className="h-6 w-6 text-brand-700" /> Evaluations</h1>
+          <h1 className="flex items-center gap-2 text-2xl font-semibold text-slate-900"><FlaskConical className="h-6 w-6 text-brand-700" /> Quality checks</h1>
           <p className="mt-1 max-w-3xl text-sm text-slate-500">
-            {data?.total ?? 26} scenario tests run end-to-end against the real orchestrator, tools, verifier and permission layer in an isolated database.
+            We test CareFlow with {data?.total ?? 26} practice scenarios, run end-to-end against the real orchestrator, tools, verifier and permission layer in an isolated database.
             {data?.generated_at && <> Last run {new Date(data.generated_at).toLocaleString()} · {data.mode}.</>}
           </p>
         </div>

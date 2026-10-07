@@ -89,7 +89,7 @@ backend/.venv/bin/python scripts/seed_demo.py     # or the "Reset demo data" but
 ## Evaluations
 
 ```bash
-./scripts/run_evals.sh          # or the "Run evaluation suite" button on the Evaluations screen
+./scripts/run_evals.sh          # or the "Run evaluation suite" button on the Quality checks screen
 ```
 
 The suite runs 26 scenarios (T01–T26) end-to-end in an isolated temporary database and writes `evals/results.json` and [docs/eval-results.md](docs/eval-results.md). Current result: **26/26 pass**. Routing validity is 100%, guardrail recall 100%, the unsupported-claim rate is 0%, 0 unsafe actions were executed, and the recovery rate is 100%. Planning compute is in milliseconds in deterministic mode.
@@ -102,11 +102,11 @@ Start from a fresh reset (**Reset demo data**). Duplicate detection will flag th
 2. **New care request → "Lafayette surgery recovery (primary demo)" → Create case** (it becomes **CF-1042**).
 3. Click **Run CareFlow** and watch the timeline: normalized → safety check passed → `staff.search` (3 eligible) → `calendar.read` → `resource.search` → `volunteer.search` ×2 → Plan v1 → Verifier PASS → awaiting approval.
 4. **Review.** Show the owner card with campus, request type, availability and experience evidence, the two appointment options, the two driver assignments, the recovery packet (safe), the meal train (needs approval), the draft message (irreversible, gated), and the **Forbidden** column.
-5. **Partial approval.** Check a few items and **Approve selected**, or click **Approve all permitted**. Actions execute; open **Executed changes** to see holds, tasks, reservations and the demo-outbox message.
+5. **Partial approval.** Tick a few items and **Approve ticked**, or click **Approve all**. Actions execute; open **What's been done** to see holds, tasks, reservations and the sent message.
 6. **Simulate event → Volunteer cancelled: VOL-014.** CareFlow invalidates v1, calls `volunteer.search`, finds replacement **VOL-021**, generates **Plan v2**, verifies it, and requests approval **only for the new driver**.
 7. Approve, then **Simulate event → Volunteer cancelled: VOL-021**. No eligible driver remains, so the case is **ESCALATED** with the exact unfilled ride, routed to the Care Coordinator. It does not fail silently.
-8. Open the **Audit log** tab (or the global Audit log) and the **Latency & cost** card.
-9. Open **Evaluations**.
+8. Open the **Full record** tab (or the global Full record page) and the **How hard CareFlow worked** card.
+9. Open **Quality checks**.
 
 Additional live edge cases: **CF-1040** (urgent same-day request routed to the weekly POC by policy); **CF-1041** (the safety gate stops automation); the *Prompt-injection* preset, whose injected instruction is flagged and changes nothing because `message.send` stays blocked; and **Simulate event → Tool outage (persistent)** on a monitoring case, which retries once, enters ERROR visibly, and recovers after **Restore tools → Retry**.
 
@@ -139,5 +139,5 @@ frontend/  Next.js + Tailwind review console
 data/      synthetic staff, volunteers, resources, calendar, cases, policies.json
 evals/     cases.json, run_evals.py, results.json
 scripts/   start_backend.sh, start_frontend.sh, seed_demo.py, run_evals.sh
-docs/      architecture.md, agent-build-doc.md, eval-results.md
+docs/      application-flow.md, architecture.md, agent-build-doc.md, eval-results.md
 ```
