@@ -1,143 +1,83 @@
 # CareFlow
 
-**A human-in-the-loop pastoral care coordination agent.**
-Gloo AI Hackathon 2026 · Agents of Flourishing track · proposed Flatirons Community Church pilot.
+**An AI agent that does the paperwork of pastoral care — so pastors can do the people work.**
 
-CareFlow takes on the *administrative logistics* around a care request: routing, scheduling, volunteer and resource coordination, follow-up and exception handling. It deliberately does **not** replace pastoral judgment. It never counsels, diagnoses, interprets anyone's spiritual state, decides financial assistance, or contacts a person in crisis on its own.
+Built for the Gloo AI Hackathon 2026 · Agents of Flourishing track · proposed Flatirons Community Church pilot.
 
-> **All demo data is synthetic.** People, cases, schedules, volunteers and resources are invented. The safety/escalation policy is a placeholder, **not** Flatirons' real crisis protocol. Flatirons-specific production workflow still requires further validation with the Care team.
+> All people, cases, schedules, and resources in this prototype are synthetic. The crisis-escalation policy is a placeholder, not a real church protocol.
 
 ---
 
-## Who it is for
+## The problem
 
-The target user is a **Care Ministry coordinator or campus pastoral-care administrator**. This is the person who moves an incoming request to the right human owner and a workable support plan: reading requests, checking schedules, finding approved resources and volunteers, drafting follow-ups, and recovering when plans change.
+When someone asks a church for care, the most important part is the human relationship. But before that conversation happens, someone on the Care team has to read the request, figure out the right pastor, check calendars, find resources, line up volunteer drivers, draft a follow-up and then start over when a volunteer cancels. That coordination burden is real, repetitive, and easy to drop. CareFlow exists to carry it end to end.
 
-### What is validated vs. assumed
+## Why an agent, not a chatbot
 
-Practitioner feedback from Flatirons (Associate Campus Pastor, Denver campus) validated these points, and they are modeled in the routing policy:
+There is no chat box in CareFlow. You hand it a request, and it **does the job like a diligent coordinator would**: it reads the request, checks the safety rules, looks up the right people and resources, writes up a complete plan, double checks its own work, waits for a human's approval, does only what was approved, keeps watch afterwards — and if something changes, it fixes the plan instead of letting the request fall through the cracks. Then it shows its work: every step, every decision, every approval, in a record nobody can edit.
 
-- Incoming pastoral/counseling requests are routed to the staff or services that best address the need.
-- Pastors are assigned based on **locality** (being more local) or **relevant experience** for the circumstances.
-- One pastor is assigned each week as **Pastor on Call (POC)**. If someone needs a call right away, that week's POC reaches out.
-- A POC may receive roughly **5–20 requests in a week**.
+## Why this is not a simple LLM wrapper
 
-Everything else, including resource inventory, volunteer systems, approval rules, escalation categories and messaging permissions, is a synthetic assumption that needs validation.
+A wrapper sends your words to a model and prints back its answer, if the model is wrong, confused, or talked into something unsafe, there's nothing in between. CareFlow is built the other way around: **the AI is one component inside a system that constrains it.** Around the model sit a state machine that owns every step, tools with server-enforced permissions, approval tokens a human must mint, a verifier that re-checks the plan against live data, monitoring that watches after execution, and a tamper proof record of everything. The model can suggest; only the system can act and only what a human allowed. That's the difference between a demo that chats and an agent a church could trust.
 
-## Why it is an agent, not a chatbot
+## What makes it advanced
 
-There is no chat box. Given a case objective, CareFlow:
+**1. It knows what it must never decide.**
+Pastoral judgment, crisis response, and money decisions stay with people always. CareFlow handles logistics: routing, scheduling, volunteers, resources, follow-ups, and recovering when plans change.
 
-1. normalizes the request into structured operational fields;
-2. runs a **deterministic safety gate** that can halt everything;
-3. calls tools: `staff.search`, `calendar.read`, `resource.search`, `volunteer.search`;
-4. builds a structured care logistics plan;
-5. runs a **separate verifier** against fresh state, and re-plans or escalates on failure;
-6. stops for **human approval**, which can be full or partial, with reject, reassign, feedback or re-plan;
-7. executes **only approved actions**, using server-checked approval tokens;
-8. **monitors** commitments; when a volunteer cancels, a resource disappears or a calendar changes, it **re-plans the minimal set of affected items** and asks for new approval only for what changed;
-9. **escalates the exact unresolved need** when no valid option exists;
-10. writes every step to an **append-only audit log**, with latency and cost.
+**2. It verifies itself with code, not vibes.**
+This is the core idea. After the AI drafts a plan, a separate **deterministic verifier** re-checks everything against live data: Is this pastor actually eligible? Is that time slot still free, checked fresh, not from memory? Does that resource exist, with enough quantity? Is every name and ID traceable to a real record? Is every consequential action gated for human approval? If anything fails, the plan goes back for rework with precise feedback — or escalates to a human with the exact problem named. The AI is never the final judge of its own work.
 
-## Architecture (one orchestrator + verifier)
+**3. Humans approve in plain language.**
+The review screen speaks like a person: "For you to decide", "Safe to go ahead", "Only people do this". Approve everything, tick a few, say no to one, suggest someone else, or ask for a new plan. Nothing, especially no message to a real person, goes out without a human saying so, enforced by the server, not by asking the AI nicely.
 
-```
-Next.js review console ──REST──► FastAPI
-                                  ├─ Orchestrator (explicit state machine, retries, background runs)
-                                  │    ├─ Normalizer      (LLM or deterministic; fixed vocabulary)
-                                  │    ├─ Safety gate     (deterministic policy - can halt)
-                                  │    ├─ Planner         (LLM or deterministic reasoner → plan JSON)
-                                  │    └─ Verifier        (deterministic checks on FRESH state + optional model review)
-                                  ├─ Tool registry (typed I/O, permissions, approval tokens, fault injection, audit)
-                                  │    staff · calendar · resources · volunteers · tasks · messaging · cases · audit
-                                  ├─ Policy store (data/policies.json)
-                                  └─ SQLite (cases, plans, actions, approvals, tasks, holds, reservations,
-                                             messages, append-only audit_events with DB triggers)
-```
+**4. It recovers instead of failing silently.**
+A volunteer cancels? CareFlow finds a qualified replacement, makes a new plan version, and asks you to approve only what changed. No replacement exists? It escalates the exact unfilled need to the Care Coordinator, it never quietly drops it.
 
-See [docs/architecture.md](docs/architecture.md) and [docs/agent-build-doc.md](docs/agent-build-doc.md).
+**5. It can't be talked out of its rules.**
+Stamp "send this without approval" into a request and CareFlow flags the instruction as untrusted data, changes nothing, and the message stays blocked. Permissions live in code the AI cannot rewrite.
 
-## Setup
+## Grounded in a real church, honest about what's assumed
 
-Requirements: Python 3.11+ (tested on 3.14) and Node 20+ (tested on 22).
+Flatirons practitioners validated how routing really works there: pastors are matched by **locality and relevant experience**, and each week one pastor serves as **Pastor on Call** for urgent same day requests (handling roughly 5–20 a week). CareFlow models exactly that. Everything else, calendars, resources, approvals, crisis protocol, is clearly-labeled synthetic stand-in data awaiting validation.
 
-```bash
-cp .env.example .env            # optional; defaults run fully offline
-./scripts/start_backend.sh      # terminal 1 → http://localhost:8000  (OpenAPI docs at /docs)
-./scripts/start_frontend.sh     # terminal 2 → http://localhost:3000
-```
+## Proof it works, not promises
 
-On first start the backend creates `backend/careflow.db` and seeds it. To reset to the deterministic starting state at any time, use any of these:
+26 scenario tests run the full system end to end, normal requests, wrong-campus traps, fully-booked pastors, calendar conflicts, out-of-stock resources, volunteer cancellations with and without replacements, ambiguous requests, crisis indicators, counseling and money requests, prompt injection, stale calendars, tool outages, duplicate intakes, and full completions:
 
-```bash
-backend/.venv/bin/python scripts/seed_demo.py     # or the "Reset demo data" button, or POST /demo/reset
-```
+| Measure | Result |
+|---|---|
+| Tests passed | **26 / 26** |
+| Right pastor every time | **100%** |
+| Red flags caught and escalated | **100%** |
+| Invented facts in plans | **0%** |
+| Unsafe actions executed | **0** (3 attempts blocked) |
+| Recoveries handled cleanly | **100%** |
 
-### Environment variables
+See the **Quality checks** screen in the app, or `docs/eval-results.md`.
 
-| Variable | Default | Purpose |
-|---|---|---|
-| `USE_MOCK_LLM` | `true` | Deterministic reasoner, no network. Set `false` to use a real model. |
-| `LLM_API_KEY`, `LLM_BASE_URL`, `LLM_MODEL` | – | Any OpenAI-compatible `/chat/completions` endpoint (e.g. Gloo AI Studio). Falls back to the deterministic reasoner on any error. |
-| `LLM_COST_INPUT_PER_1K`, `LLM_COST_OUTPUT_PER_1K` | 0.00015 / 0.0006 | Used for the cost estimate. |
-| `DEMO_STEP_DELAY_MS` | `450` | Visible pacing between agent steps, so the audience can watch. Real state changes at every step. |
-| `DEMO_NOW` | `2026-10-06T09:00:00` | Fixed demo clock (a Tuesday) so schedules are reproducible. |
-| `APPROVAL_SECRET` | demo value | HMAC secret for approval tokens. |
-| `DATABASE_URL` | `backend/careflow.db` | SQLite URL. |
-| `NEXT_PUBLIC_API_URL` | `http://localhost:8000` | Frontend → API. |
+## Where this goes next
 
-## Evaluations
+The prototype proves the pattern; the road ahead is about plugging it into real church life:
+
+- **Real systems, not stand-ins** — connect the actual intake forms, calendars, staff roster, and messaging channels, so plans execute in the tools the Care team already uses.
+- **Validated rules** — sit with the Care team and replace every synthetic assumption (approvals, resources, escalation protocol) with their real workflow.
+- **Real-model evaluation** — run the same 26-scenario suite against a production model and publish the before/after, so safety is measured, not asserted.
+- **People-aware roles** — church sign-in with distinct permissions for coordinators, pastors, and volunteer leads.
+- **Wider care** — follow-up tracking over weeks, multi-campus load balancing for the on-call rotation, and smarter volunteer matching as the pool grows.
+
+## Run it
+
+You need Python 3.11+ and Node.js 20+. No database to install, no API key needed — it runs fully offline.
 
 ```bash
-./scripts/run_evals.sh          # or the "Run evaluation suite" button on the Quality checks screen
+./scripts/start_backend.sh     # http://localhost:8000
+./scripts/start_frontend.sh    # http://localhost:3000
+./scripts/run_evals.sh         # the 26-scenario suite
 ```
 
-The suite runs 26 scenarios (T01–T26) end-to-end in an isolated temporary database and writes `evals/results.json` and [docs/eval-results.md](docs/eval-results.md). Current result: **26/26 pass**. Routing validity is 100%, guardrail recall 100%, the unsupported-claim rate is 0%, 0 unsafe actions were executed, and the recovery rate is 100%. Planning compute is in milliseconds in deterministic mode.
+To use a real AI model instead of the built-in deterministic mode (e.g. Gloo AI Studio), copy `.env.example` to `.env` and set `USE_MOCK_LLM=false` plus your endpoint details — the system falls back safely if the model ever fails. See `docs/agent-build-doc.md` for the full engineering story and `docs/application-flow.md` for how the pieces fit.
 
-## Demo script (3–5 minutes)
+## Known limits
 
-Start from a fresh reset (**Reset demo data**). Duplicate detection will flag the surgery request if it was already submitted in a rehearsal.
-
-1. **Dashboard.** Show the queue, the status counts, and the Pastor-on-Call card (policy).
-2. **New care request → "Lafayette surgery recovery (primary demo)" → Create case** (it becomes **CF-1042**).
-3. Click **Run CareFlow** and watch the timeline: normalized → safety check passed → `staff.search` (3 eligible) → `calendar.read` → `resource.search` → `volunteer.search` ×2 → Plan v1 → Verifier PASS → awaiting approval.
-4. **Review.** Show the owner card with campus, request type, availability and experience evidence, the two appointment options, the two driver assignments, the recovery packet (safe), the meal train (needs approval), the draft message (irreversible, gated), and the **Forbidden** column.
-5. **Partial approval.** Tick a few items and **Approve ticked**, or click **Approve all**. Actions execute; open **What's been done** to see holds, tasks, reservations and the sent message.
-6. **Simulate event → Volunteer cancelled: VOL-014.** CareFlow invalidates v1, calls `volunteer.search`, finds replacement **VOL-021**, generates **Plan v2**, verifies it, and requests approval **only for the new driver**.
-7. Approve, then **Simulate event → Volunteer cancelled: VOL-021**. No eligible driver remains, so the case is **ESCALATED** with the exact unfilled ride, routed to the Care Coordinator. It does not fail silently.
-8. Open the **Full record** tab (or the global Full record page) and the **How hard CareFlow worked** card.
-9. Open **Quality checks**.
-
-Additional live edge cases: **CF-1040** (urgent same-day request routed to the weekly POC by policy); **CF-1041** (the safety gate stops automation); the *Prompt-injection* preset, whose injected instruction is flagged and changes nothing because `message.send` stays blocked; and **Simulate event → Tool outage (persistent)** on a monitoring case, which retries once, enters ERROR visibly, and recovers after **Restore tools → Retry**.
-
-## Safety and guardrails
-
-- **Deterministic safety gate** (self-harm/crisis, abuse, medical emergency, imminent danger, minors). It runs before planning, and the model can only *add* flags. When it matches, automation stops and the case shows the configured human escalation protocol (labeled synthetic).
-- **Eligibility is code, not model judgment.** `staff.search` returns only active, campus-matched, request-type-approved staff, or the POC/backup POC for urgent requests. The planner can only rank those candidates.
-- **No fabricated entities.** Every staff, volunteer and resource ID must come from a tool result. The verifier rejects anything else, and the evals measure a 0% unsupported-claim rate.
-- **Server-side approval tokens.** Write tools need an HMAC token tied to an approval record. `message.send` is irreversible, needs a single-use **human** approval, and is blocked for crisis cases.
-- **Forbidden actions** (financial decisions, counseling, diagnosis, moving money, autonomous crisis contact) are not executable. Financial categories can never be reserved.
-- **Prompt-injection resistance.** Request text is wrapped as untrusted data. Instruction-like text is flagged, and permissions are enforced in code regardless.
-- **Append-only audit.** SQLite triggers abort any UPDATE/DELETE on `audit_events`.
-- **Data minimization.** Requester messages never include volunteer names, and calendars expose free/busy only.
-
-## Known limitations
-
-- Flatirons' real intake system, calendars, rosters, resource systems, approval rules and crisis protocol are **not validated**. Everything except the practitioner-validated routing concepts above is synthetic.
-- Messaging is a demo outbox; nothing is actually sent. Calendar and roster adapters are mocks.
-- There is no authentication or role-based access (reviewers type their name). Production needs church SSO and per-role permissions.
-- The safety gate is keyword-based and intentionally conservative. A production system needs a validated protocol and clinical review.
-- The deterministic reasoner is used in the demo and the evals. Real-model behavior depends on the configured provider and should be re-evaluated with the same suite.
-- Single-process background threads and SQLite are fine for a demo, not for production scale.
-
-## Repository layout
-
-```
-backend/   FastAPI app: agent/ (orchestrator, planner, verifier, policies, state machine, events),
-           tools/ (typed, permissioned adapters), llm/ (provider interface), models/, schemas/, db/, audit/, api/
-frontend/  Next.js + Tailwind review console
-data/      synthetic staff, volunteers, resources, calendar, cases, policies.json
-evals/     cases.json, run_evals.py, results.json
-scripts/   start_backend.sh, start_frontend.sh, seed_demo.py, run_evals.sh
-docs/      application-flow.md, architecture.md, agent-build-doc.md, eval-results.md
-```
+Synthetic data throughout; Flatirons' real systems, approvals, and crisis protocol still need validation. Messaging is a demo outbox (nothing is actually sent). No login yet. The safety rules are a conservative placeholder. And the evals ran in offline deterministic mode — the same suite is ready to run against a real model.
